@@ -17,6 +17,7 @@ type s3Client struct {
 	uploader *s3manager.Uploader
 }
 
+// NewClient returns a Client to use s3
 func NewClient(config *Config) (Client, error) {
 	sess, err := session.NewSession(&aws.Config{
 		Region:           aws.String(config.Region),
