@@ -12,9 +12,10 @@ import (
 )
 
 type s3Client struct {
-	config   *Config
-	handle   *s3.S3
-	uploader *s3manager.Uploader
+	config     *Config
+	handle     *s3.S3
+	uploader   *s3manager.Uploader
+	downloader *s3manager.Downloader
 }
 
 // NewClient returns a Client to use s3
@@ -34,9 +35,10 @@ func NewClient(config *Config) (Client, error) {
 	}
 
 	return &s3Client{
-		config:   config,
-		handle:   s3.New(sess),
-		uploader: s3manager.NewUploader(sess),
+		config:     config,
+		handle:     s3.New(sess),
+		uploader:   s3manager.NewUploader(sess),
+		downloader: s3manager.NewDownloader(sess),
 	}, nil
 }
 

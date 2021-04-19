@@ -4,7 +4,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"io"
 	"mime/multipart"
 	"time"
 )
@@ -46,18 +45,15 @@ func (bucket *s3Bucket) List(directory string) ([]File, error) {
 	return files, nil
 }
 
-func (bucket *s3Bucket) Get(filePath string) (io.Reader, error) {
-	req, out := bucket.client.handle.GetObjectRequest(&s3.GetObjectInput{
-		Bucket: aws.String(bucket.bucketName),
-		Key:    aws.String(filePath),
-	})
+func (bucket *s3Bucket) Download(filePath string) ([]byte, int64, error) {
+	buf := aws.NewWriteAtBuffer([]byte{})
+	numBytes, err := bucket.client.downloader.Download(buf,
+		&s3.GetObjectInput{
+			Bucket: aws.String(bucket.bucketName),
+			Key:    aws.String(filePath),
+		})
 
-	err := req.Send()
-	if err != nil {
-		return nil, err
-	}
-
-	return out.Body, nil
+	return buf.Bytes(), numBytes, err
 }
 
 func (bucket *s3Bucket) GetPreSignedLink(filePath string, expiry time.Duration) (string, error) {

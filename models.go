@@ -1,7 +1,6 @@
 package gos3
 
 import (
-	"io"
 	"mime/multipart"
 	"time"
 )
@@ -33,8 +32,8 @@ type Bucket interface {
 	// List files in the given directory of the selected bucket
 	List(directory string) ([]File, error)
 
-	// Get file from the selected bucket
-	Get(filePath string) (io.Reader, error)
+	// Download file from the selected bucket
+	Download(filePath string) ([]byte, int64, error)
 
 	// Delete file from the selected bucket
 	Delete(filePath string) error

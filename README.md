@@ -6,6 +6,7 @@ Use S3 as you use your local file system with this simple wrapper over `github.c
 
 ## Includes
 - Uploading a file
+- Downloading a file
 - Deleting a file
 - Getting a pre-signed link to the file
 
@@ -15,6 +16,7 @@ package main
 
 import (
     "github.com/IamFaizanKhalid/gos3"
+    "io/ioutil"
     "log"
     "os"
     "time"
@@ -45,6 +47,17 @@ func main() {
     }
 
     err = bucket.Upload(file, file.Name(), "backup")
+    if err != nil {
+        log.Panicln(err)
+    }
+
+    // Download a file
+    b, _, err := bucket.Download("backup/README.md")
+    if err != nil {
+        log.Panicln(err)
+    }
+
+    err = ioutil.WriteFile("README.md", b, os.ModePerm)
     if err != nil {
         log.Panicln(err)
     }
